@@ -3,7 +3,8 @@
     alert(JSON.stringify(event.data));
   }
 
-  var dest = window.open("https://reverb.com/oauth/authorize?client_id=9872e90b41ccb870739e75b10a7685a1383219983badf18345cff78aafd271cd&redirect_uri=https://www.feedboost.rocks/subscribe/success&response_type=code&scope=read_lists+read_profile&state=a");
+  var dest = window.open("https://login.bigcommerce.com/oauth2/authorize?client_id=l3mctiuoglg5aqq583sugi5w0ftlrbl&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&response_type=code&scope=users_basic_information+users_apps+admin_app_registry+store_v2_customers+store_v2_content_read_only+store_v2_content+store_v2_marketing&state=f47e3190a30143d12e1e117a47b98085dbf7a069d7934578");
   
   window.addEventListener("message", listener);
 </script>
+  
